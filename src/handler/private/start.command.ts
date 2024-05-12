@@ -39,12 +39,12 @@ Commands.addNewCommand("start", "Start the bot!");
 
 export const startCommand = composer;
 
-const welcomeUser = async (context: CommandContext<BotContext>) => {
+async function welcomeUser(context: CommandContext<BotContext>) {
   let caption = env.WELCOME_MESSAGE;
 
   let inlineKeyboard;
-  if (env.REQUIRED_CHAT_TO_JOIN.length > 0) {
-    caption += `\n${context.i18n.t("join_required_chat_message")}`;
+  if (env.REQUIRED_CHATS_TO_JOIN.length > 0) {
+    // caption += `\n${context.t("join_required_chat_message")}`;
 
     inlineKeyboard = await generateRequiredChatButtons(context);
   }
@@ -53,12 +53,12 @@ const welcomeUser = async (context: CommandContext<BotContext>) => {
     caption,
     reply_markup: inlineKeyboard,
   });
-};
+}
 
 const userInRequiredChats = async (context: CommandContext<BotContext>) => {
   if (!context.from?.id) return false;
 
-  for (const requiredChat of env.REQUIRED_CHAT_TO_JOIN) {
+  for (const requiredChat of env.REQUIRED_CHATS_TO_JOIN) {
     const chat = await context.api.getChatMember(requiredChat, context.from.id);
     if (chat.status === "left") return false;
   }
@@ -71,7 +71,7 @@ async function generateRequiredChatButtons(
   context: CommandContext<BotContext>
 ) {
   const inlineKeyboard = new InlineKeyboard();
-  for (const requiredChat of env.REQUIRED_CHAT_TO_JOIN) {
+  for (const requiredChat of env.REQUIRED_CHATS_TO_JOIN) {
     if (!requiredChat) continue;
     const chat = (await context.api.getChat(requiredChat)) as Channel;
 

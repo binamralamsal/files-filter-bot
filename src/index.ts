@@ -25,7 +25,6 @@ bot.api.config.use(parseMode("MarkdownV2"));
 
 bot.use(handlers);
 await Commands.setCommands();
-console.log(env.WELCOME_MESSAGE);
 
 run(bot);
 Logger.send(i18n.t("en", "bot_started"));

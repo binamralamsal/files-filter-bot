@@ -4,9 +4,9 @@ import { env } from "./src/config/env";
 export default defineConfig({
   schema: "./src/drizzle/schema.ts",
   out: "./src/drizzle/migrations",
-  driver: "pg",
+  dialect: "postgresql",
   dbCredentials: {
-    connectionString: env.DATABASE_URL,
+    url: env.DATABASE_URL,
   },
   verbose: env.NODE_ENV === "development",
   strict: true,

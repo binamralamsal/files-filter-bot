@@ -6,38 +6,95 @@ bot_started=
   Now, Bot is up and running!!!
 
 welcome_message_caption=
-  Hello there, Welcome here ✨
+  > Welcome here ✨
 
-  We are happy to see you here.
+  We are happy to see you here\.
 
-  We are a Brand who provide all kind of content to members with no cost.
+  We are a Brand who provide all kind of content to members with no cost\.
 
-# welcome_message_caption: |
-#   Hello there, Welcome here ✨
 
-#   We are happy to see you here.
+join_required_chats=
+  ⚠️ Caution:- 
+  > For Getting Your Files, First You Have to Join Listed "Channels/Groups" Given Below👇🏻
 
-#   We are a Brand who provide all kind of content to members with no cost.
-# welcome_message_channels_given: |
+join_required_chat_message=
+  > Don't forget to join channels/groups given below and get what you dream in your life. ✌🏻
 
-#   Don't forget to join channels given below and get what you dream in your life. ✌🏻
+users_scanned=
+  > Total number of users scanned: { $usersLength }
 
-# users_scanned: |
-#   Total number of users scanned: ${usersLength}
+no_message_to_broadcast=
+  > No message to broadcast! 
 
-# channel_already_exists: |
-#   Sorry but that channel already exists.
+  Please mention the message that you want to broadcast
 
-#   Please use <code>/del channelId</code> if you want to delete or add again.
+no_users_to_broadcast=
+  Not enough users are recorded yet!
 
-# adding_channel: |
-#   Adding <code>${channelId}</code> in ${chatName} (<code>${chatId}</code>)
+  > Please try again later
 
-# deleting_channel: |
-#   Deleting <code>${channelId}</code> in ${chatName} (<code>${chatId}</code>)
 
-# deleting_all_channels: |
-#   Deleting all channels in ${chatName} (<code>${chatId}</code>)
+broadcasting_message=
+  > Broadcasting your message to { $length } members
+
+broadcast_complete=
+  > Successfully broadcasted your message to { $successCount }/{ $length } members\.
+  
+  > Failed for { $failedCount } members
+
+welcome_message_channels_given=
+  Don't forget to join channels given below and get what you dream in your life\. ✌🏻
+
+channel_already_exists=
+  Sorry but that channel already exists\.
+
+  Please use `/del channelId` if you want to delete or add again\.
+
+adding_channel=
+  > Adding files from `{ $channelId }` in database
+
+error_while_adding_files=
+  `{ $errorMessage }`
+
+  Error while adding files\. Channel not found\!
+
+  Be sure the account that you are using for bot is added to the channel that you are trying to add\.
+
+adding_finished=
+  Added { $fileLength } files from `{ $channelId }` successfully\.
+
+invalid_channel_id=
+  > Invalid Channel ID
+
+finding_files_in_channel=
+  > Finding for files in `{ $channelId }`
+
+found_files_in_channel=
+  > Found { $filesCount } files from `{ $channelId }`
+
+no_channels_found=
+  > No channels found\!
+
+channel_not_found_delete=
+  > Channel that you are trying to delete i\.e\. `{ $channelId }` not found\!
+
+deleting_channel=
+  > Deleting files of `{ $channelId }` from database\.
+
+error_while_deleting_files=
+  `{ $errorMessage }`
+
+  Error while deleting channel\. Please check logs for more info\.
+
+
+deleting_finished=
+  > `{ $channelId }` deleted Successfully\!
+
+deleting_all_channels: |
+  > Deleting all channels from database\.
+
+deleting_all_finished=
+  > All channels deleted Successfully\.
 
 # refreshing_all_channels_deleting: |
 #   Refreshing all channels in ${chatName} (<code>${chatId}</code>)
@@ -68,28 +125,6 @@ welcome_message_caption=
 # refreshing_finished: |
 #   ${channelID} refreshed successfully!
 
-# adding_finished: |
-#   <code>${channelId}</code> added Successfully.
-
-#   Total Files: ${fileLength}
-
-# deleting_finished: |
-#   <code>${channelId}</code> deleted Successfully.
-
-# deleting_all_finished: |
-#   All channels deleted Successfully.
-
-# error_while_adding_files: |
-#   <code>${errorMessage}</code>
-
-#   Error while adding files. Channel not found!
-
-#   Be sure the account that you are using for bot is added to the channel that you are trying to add.
-
-# error_while_deleting_files: |
-#   <code>${errorMessage}</code>
-
-#   Error while deleting channel. Please check logs for more info.
 
 # error: |
 #   <code>${errorStack}</code>
@@ -101,11 +136,6 @@ welcome_message_caption=
 #   <strong>User</strong>: ${user}
 #   <strong>Chat</strong>: ${chat}
 
-# no_channels_found: |
-#   No channels found!
-
-# channel_not_found_delete: |
-#   Channel that you are trying to delete i.e. <code>${channelID}</code> not found!
 
 # channel_not_found_refresh: |
 #   Channel that you are trying to refresh i.e. <code>${channelID}</code> not found!
@@ -114,28 +144,6 @@ welcome_message_caption=
 #   Invalid command given!
 
 #   Missing argument [channel-id] after /refresh.
-
-# invalid_channel_id: |
-#   Invalid Channel ID. String found in channel ID
-
-# no_message_to_broadcast: |
-#   No message to broadcast! 
-
-#   Please mention the message that you want to broadcast.
-
-# broadcasting_message: |
-#   Broadcasting your message to ${length} members.
-
-# no_users_to_broadcast: |
-#   Not enough users are recorded yet!
-
-#   Please try again later.
-
-# broadcast_complete: |
-#   Successfully broadcasted your message to ${length} members
-
-# join_required_chat_message: |
-#   Don't forget to join channels/groups given below and get what you dream in your life. ✌🏻
 
 # maintenance_mode_on: |
 #   Maintenance mode is <strong>turned on</strong>! Please check back after some time.
@@ -175,8 +183,3 @@ welcome_message_caption=
 #   Bot is not member of <code>${channelId}</code>
 
 #   Please add bot so that bot can share files.
-
-# join_required_chats: |
-#   <strong>⚠️ Caution:- 
-
-#   For Getting Your Files, First You Have to Join Listed "Channels/Groups" Given Below👇🏻</strong>
