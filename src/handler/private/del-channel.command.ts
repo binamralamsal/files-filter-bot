@@ -23,10 +23,10 @@ composer.command("del", async (context) => {
     where: eq(filesTable.channelId, context.match),
   });
   if (!fileFromSameChannel) {
-    context.reply(
+    return await context.reply(
       context.t("channel_not_found_delete", {
         channelId: context.match,
-      })
+      }),
     );
   }
 
@@ -48,6 +48,7 @@ composer.command("del", async (context) => {
       errorMessage: errorReason,
     });
 
+    Logger.send(errorMessage);
     return await deletingMessage.editText(errorMessage);
   }
 

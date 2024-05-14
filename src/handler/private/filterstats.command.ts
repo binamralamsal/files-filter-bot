@@ -32,9 +32,10 @@ composer.command("filterstats", async (context) => {
       if (error instanceof Error) errorMessage = error.message;
 
       Logger.send(errorMessage);
-      infoMessage += `${+index + 1}\) ${channel}}\n`;
+      infoMessage += `${+index + 1}\\\) \`${channel}\`\n`;
     }
   }
+  Logger.send(infoMessage);
   context.reply(infoMessage);
 });
 

@@ -61,7 +61,7 @@ error_while_adding_files=
   Be sure the account that you are using for bot is added to the channel that you are trying to add\.
 
 adding_finished=
-  Added { $fileLength } files from `{ $channelId }` successfully\.
+  > Added { $fileLength } files from `{ $channelId }` successfully\.
 
 invalid_channel_id=
   > Invalid Channel ID

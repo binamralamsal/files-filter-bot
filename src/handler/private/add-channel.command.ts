@@ -24,8 +24,9 @@ composer.command("add", async (context) => {
   }
 
   const hasNumber = /\d/;
-  if (!hasNumber.test(context.match))
+  if (!hasNumber.test(context.match)) {
     return context.reply(context.t("invalid_channel_id"));
+  }
 
   const addingMessageText = context.t("adding_channel", {
     channelId: context.match,
@@ -46,6 +47,7 @@ composer.command("add", async (context) => {
       errorMessage: errorReason,
     });
 
+    Logger.send(errorMessage);
     return await addingMessage.editText(errorMessage);
   }
 
@@ -66,11 +68,13 @@ async function addFiles(channelId: string, addingMessage: any) {
 
   const files = [];
 
-  addingMessage.editText(
-    i18n.t("en", "finding_files_in_channel", { channelId })
-  );
+  const findingFilesText = i18n.t("en", "finding_files_in_channel", {
+    channelId,
+  });
+  addingMessage.editText(findingFilesText);
+  Logger.send(findingFilesText);
 
-  for await (const message of client.iterMessages(parseInt(channelId), {
+  for await (const message of client.iterMessages(parseInt(channelId.trim()), {
     limit: 10000000,
   })) {
     if (!message.file?.mimeType?.startsWith("video")) continue;
@@ -81,18 +85,18 @@ async function addFiles(channelId: string, addingMessage: any) {
           messageId: message.id,
           channelId,
           reason: message.restrictionReason?.toString(),
-        })
+        }),
       );
       continue;
     }
 
     if (files.length !== 0 && files.length % 500 === 0) {
-      addingMessage.editText(
-        i18n.t("en", "found_files_in_channel", {
-          filesCount: files.length,
-          channelId,
-        })
-      );
+      const foundFilesText = i18n.t("en", "found_files_in_channel", {
+        filesCount: files.length,
+        channelId,
+      });
+      addingMessage.editText(foundFilesText);
+      Logger.send(foundFilesText);
     }
 
     files.push({
@@ -100,7 +104,7 @@ async function addFiles(channelId: string, addingMessage: any) {
       caption: message.message || message.file.name,
       channelId,
       fileSize: Math.trunc(
-        parseInt(message.file.size?.toString() || "") / 1024 / 1024
+        parseInt(message.file.size?.toString() || "") / 1024 / 1024,
       ),
     });
   }

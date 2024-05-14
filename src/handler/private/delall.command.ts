@@ -36,6 +36,7 @@ composer.command("delall", async (context) => {
       errorMessage: errorReason,
     });
 
+    Logger.send(errorMessage);
     await deletingMessage.editText(errorMessage);
   }
 
