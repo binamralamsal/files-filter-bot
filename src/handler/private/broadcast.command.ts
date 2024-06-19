@@ -2,6 +2,7 @@ import { db } from "#/drizzle/db";
 import { usersTable } from "#/drizzle/schema";
 import type { BotContext } from "#/types";
 import { Commands } from "#/util/commands";
+import { formatDuration } from "#/util/format-duration";
 import { Logger } from "#/util/logger";
 import { eq } from "drizzle-orm";
 import { Composer } from "grammy";
@@ -11,8 +12,8 @@ const composer = new Composer<BotContext>();
 composer.command("broadcast", async (context) => {
   const { message } = context.update;
 
-  const messageToForward = message?.reply_to_message?.message_id || null;
-  if (!messageToForward || !message?.reply_to_message?.message_id) {
+  const messageToForward = message?.reply_to_message?.message_id;
+  if (!messageToForward || !message) {
     return context.reply(context.t("no_message_to_broadcast"));
   }
 
@@ -22,50 +23,87 @@ composer.command("broadcast", async (context) => {
     return context.reply(context.t("no_users_to_broadcast"));
   }
 
-  const broadcastingMessage = context.t("broadcasting_message", {
+  const broadcastingMessageText = context.t("broadcasting_message", {
     length: users.length,
   });
-  Logger.send(broadcastingMessage);
-  const { message_id: messageId } = await context.reply(broadcastingMessage);
+  Logger.send(broadcastingMessageText);
+  const broadcastingMessage = await context.reply(broadcastingMessageText);
 
-  let failedCount = 0;
+  let unknownErrorCount = 0;
+  let blockedCount = 0;
+  let doneCount = 0;
+
+  const startTime = new Date();
+  let endTime: Date;
+
   for (const user of users) {
     try {
       await context.api.copyMessage(
         user.chatId,
         message.chat.id,
-        messageToForward
+        messageToForward,
       );
     } catch (error) {
       let errorMessage = "Something Occured!";
-      if (error instanceof Error) errorMessage = "Something Occured";
+      if (error instanceof Error) errorMessage = error.message;
 
-      failedCount++;
+      if (error instanceof Error && error.message.includes("blocked")) {
+        blockedCount++;
+      } else {
+        unknownErrorCount++;
+      }
 
       Logger.send(
-        `Failed to copy message to user ${user.chatId}: ${errorMessage}`
+        `Failed to copy message to user ${user.chatId}: ${errorMessage}`,
       );
+
       await db.delete(usersTable).where(eq(usersTable.chatId, user.chatId));
       continue;
+    } finally {
+      doneCount++;
+
+      endTime = new Date();
+
+      const doneTime = endTime.getTime() - startTime.getTime();
+      const totalEstimatedTime = (doneTime / doneCount) * users.length;
+      const estimatedTimeRemaining = totalEstimatedTime - doneTime;
+
+      if (doneCount % 50 === 0) {
+        const broadcastingProgressMessageText = context.t(
+          "broadcasting_progress",
+          {
+            length: users.length,
+            successCount: doneCount - unknownErrorCount - blockedCount,
+            blockedCount,
+            unknownErrorCount,
+            estimatedTime: formatDuration(estimatedTimeRemaining),
+            doneCount,
+          },
+        );
+
+        Logger.send(broadcastingProgressMessageText);
+        await broadcastingMessage.editText(broadcastingProgressMessageText);
+      }
     }
   }
 
+  endTime = new Date();
+
   const broadcastCompletedMessage = context.t("broadcast_complete", {
     length: users.length,
-    successCount: users.length - failedCount,
-    failedCount,
+    successCount: users.length - unknownErrorCount - blockedCount,
+    blockedCount,
+    doneCount,
+    unknownErrorCount,
+    time: formatDuration(endTime.getTime() - startTime.getTime()),
   });
   Logger.send(broadcastCompletedMessage);
-  await context.api.editMessageText(
-    message.chat.id,
-    messageId,
-    broadcastCompletedMessage
-  );
+  await broadcastingMessage.editText(broadcastCompletedMessage);
 });
 
 Commands.addNewCommand(
   "broadcast",
-  "Broadcast a message to all users (Mention a message to broadcast)"
+  "Broadcast a message to all users (Mention a message to broadcast)",
 );
 
 export const broadcastCommand = composer;

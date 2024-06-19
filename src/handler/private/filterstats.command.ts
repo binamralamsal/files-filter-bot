@@ -8,8 +8,6 @@ import { Composer } from "grammy";
 
 const composer = new Composer<BotContext>();
 composer.command("filterstats", async (context) => {
-  const { message } = context.update;
-
   const { count: filesCount } = (
     await db.select({ count: count() }).from(filesTable).limit(1)
   )[0];

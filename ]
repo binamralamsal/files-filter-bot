@@ -24,12 +24,11 @@ users_scanned=
   > Total number of users scanned: { $usersLength }
 
 no_message_to_broadcast=
-  > No message to broadcast\! 
-
+  > No message to broadcast! 
   Please mention the message that you want to broadcast
 
 no_users_to_broadcast=
-  Not enough users are recorded yet\!
+  Not enough users are recorded yet!
 
   > Please try again later
 
@@ -41,19 +40,18 @@ broadcasting_progress=
   > Broadcast in progress\!
 
   Estimated time: `{ $estimatedTime }`
-  Total Users: `{ $length }`
-  Success: `{ $successCount }`
+  Broadcasted: `{ $successCount }/{ $length }` members\.
+  Failed: `{ $unknownErrorCount }`
   Blocked: `{ $blockedCount }`
-  Deleted: `{ $unknownErrorCount }`
 
 broadcast_complete=
   > Broadcast completed\!
 
   Completed in: `{ $time }`
   Total Users: `{ $length }`
-  Success: `{ $successCount }`
+  Broadcasted: `{ $successCount }/{ $length }`
+  Failed: `{ $unknownErrorCount }`
   Blocked: `{ $blockedCount }`
-  Deleted: `{ $unknownErrorCount }`
 
 welcome_message_channels_given=
   Don't forget to join channels given below and get what you dream in your life\. ✌🏻
@@ -75,6 +73,9 @@ error_while_adding_files=
 
 adding_finished=
   > Added { $fileLength } files from `{ $channelId }` successfully\.
+
+invalid_channel_id=
+  > Invalid Channel ID
 
 finding_files_in_channel=
   > Finding for files in `{ $channelId }`
@@ -106,8 +107,8 @@ deleting_all_channels=
 deleting_all_finished=
   > All channels deleted Successfully\.
 
-pass_valid_channel_id=
-  > Please pass a valid channelID after the command 
+pass_a_channel_id=
+  > Please pass a channelID after the command 
 
 # refreshing_all_channels_deleting: |
 #   Refreshing all channels in ${chatName} (<code>${chatId}</code>)

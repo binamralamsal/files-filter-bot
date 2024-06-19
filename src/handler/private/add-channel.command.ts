@@ -7,6 +7,7 @@ import { eq } from "drizzle-orm";
 import { Composer } from "grammy";
 import { client } from "#/config/telegram-user-client";
 import i18n from "#/lib/i18n";
+import { cleanChannelID } from "#/util/clean-channel-id";
 
 const composer = new Composer<BotContext>();
 
@@ -15,28 +16,26 @@ composer.command("add", async (context) => {
 
   if (!message) return;
 
+  const cleanedChannelId = cleanChannelID(context.match);
+  if (!cleanedChannelId) return context.reply(context.t("pass_valid_channel_id"));
+
   if (
     await db.query.filesTable.findFirst({
-      where: eq(filesTable.channelId, context.match),
+      where: eq(filesTable.channelId, cleanedChannelId),
     })
   ) {
     return context.reply(context.t("channel_already_exists"));
   }
 
-  const hasNumber = /\d/;
-  if (!hasNumber.test(context.match)) {
-    return context.reply(context.t("invalid_channel_id"));
-  }
-
   const addingMessageText = context.t("adding_channel", {
-    channelId: context.match,
+    channelId: cleanedChannelId,
   });
   Logger.send(addingMessageText);
   const addingMessage = await context.reply(addingMessageText);
 
   let files;
   try {
-    files = await addFiles(context.match, addingMessage);
+    files = await addFiles(cleanedChannelId, addingMessage);
   } catch (error) {
     let errorReason = "Something happened";
     if (error instanceof Error) {
@@ -52,7 +51,7 @@ composer.command("add", async (context) => {
   }
 
   const addingFinishedMessage = context.t("adding_finished", {
-    channelId: context.match,
+    channelId: cleanedChannelId,
     fileLength: files.length,
   });
   Logger.send(addingFinishedMessage);

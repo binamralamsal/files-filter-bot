@@ -5,12 +5,16 @@ import { filesTable } from "#/drizzle/schema";
 import { count, eq } from "drizzle-orm";
 import { Commands } from "#/util/commands";
 import { Logger } from "#/util/logger";
+import { cleanChannelID } from "#/util/clean-channel-id";
 
 const composer = new Composer<BotContext>();
 composer.command("del", async (context) => {
   const { message } = context.update;
 
   if (!message) return;
+
+  const cleanedChannelId = cleanChannelID(context.match);
+  if (!cleanedChannelId) context.reply(context.t("pass_valid_channel_id"));
 
   const { id: chatId } = message.chat;
 
@@ -20,25 +24,27 @@ composer.command("del", async (context) => {
   if (filesCount === 0) return context.reply(context.t("no_channels_found"));
 
   const fileFromSameChannel = await db.query.filesTable.findFirst({
-    where: eq(filesTable.channelId, context.match),
+    where: eq(filesTable.channelId, cleanedChannelId),
   });
   if (!fileFromSameChannel) {
     return await context.reply(
       context.t("channel_not_found_delete", {
-        channelId: context.match,
+        channelId: cleanedChannelId,
       }),
     );
   }
 
   const deletingMessageText = context.t("deleting_channel", {
-    channelId: context.match,
+    channelId: cleanedChannelId,
     chatId,
   });
   Logger.send(deletingMessageText);
   const deletingMessage = await context.reply(deletingMessageText);
 
   try {
-    await db.delete(filesTable).where(eq(filesTable.channelId, context.match));
+    await db
+      .delete(filesTable)
+      .where(eq(filesTable.channelId, cleanedChannelId));
   } catch (error) {
     let errorReason = "Something happened";
     if (error instanceof Error) {
@@ -53,7 +59,7 @@ composer.command("del", async (context) => {
   }
 
   const deletingFinishedMessage = context.t("deleting_finished", {
-    channelId: context.match,
+    channelId: cleanedChannelId,
   });
   Logger.send(deletingFinishedMessage);
   await deletingMessage.editText(deletingFinishedMessage);
