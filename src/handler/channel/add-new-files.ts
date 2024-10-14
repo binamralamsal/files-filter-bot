@@ -1,6 +1,10 @@
+import { env } from "#/config/env";
 import { db } from "#/drizzle/db";
 import { filesTable } from "#/drizzle/schema";
+import { generateFileId } from "#/lib/generate-file-id";
+import { searchClient } from "#/lib/meilisearch";
 import type { BotContext } from "#/types";
+import { insertFiles } from "#/use-cases/insert-files";
 import { eq } from "drizzle-orm";
 import { Composer } from "grammy";
 
@@ -31,12 +35,15 @@ composer.on(
     const fileCaption = caption || document?.file_name || video?.file_name;
     if (!fileCaption) return;
 
-    await db.insert(filesTable).values({
-      messageId,
-      channelId: String(channelId),
-      fileSize: fileSizeInMb,
-      caption: fileCaption,
-    });
+    const files = [
+      {
+        messageId,
+        channelId: String(channelId),
+        fileSize: fileSizeInMb,
+        caption: fileCaption,
+      },
+    ];
+    await insertFiles(files);
   }
 );
 

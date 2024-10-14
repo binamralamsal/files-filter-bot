@@ -1,13 +1,19 @@
+import { Composer } from "grammy";
+import type { Message } from "grammy/types";
+
+import type { MessageXFragment } from "@grammyjs/hydrate/out/data/message";
+
+import { eq } from "drizzle-orm";
+
+import { client } from "#/config/telegram-user-client";
 import { db } from "#/drizzle/db";
 import { filesTable } from "#/drizzle/schema";
+import i18n from "#/lib/i18n";
 import type { BotContext } from "#/types";
+import { insertFilesInChunks } from "#/use-cases/insert-files";
+import { cleanChannelID } from "#/util/clean-channel-id";
 import { Commands } from "#/util/commands";
 import { Logger } from "#/util/logger";
-import { eq } from "drizzle-orm";
-import { Composer } from "grammy";
-import { client } from "#/config/telegram-user-client";
-import i18n from "#/lib/i18n";
-import { cleanChannelID } from "#/util/clean-channel-id";
 
 const composer = new Composer<BotContext>();
 
@@ -17,7 +23,8 @@ composer.command("add", async (context) => {
   if (!message) return;
 
   const cleanedChannelId = cleanChannelID(context.match);
-  if (!cleanedChannelId) return context.reply(context.t("pass_valid_channel_id"));
+  if (!cleanedChannelId)
+    return context.reply(context.t("pass_valid_channel_id"));
 
   if (
     await db.query.filesTable.findFirst({
@@ -38,6 +45,7 @@ composer.command("add", async (context) => {
     files = await addFiles(cleanedChannelId, addingMessage);
   } catch (error) {
     let errorReason = "Something happened";
+
     if (error instanceof Error) {
       errorReason = error.message;
     }
@@ -62,14 +70,21 @@ Commands.addNewCommand("add", "Adds channel to database");
 
 export const addChannelCommand = composer;
 
-async function addFiles(channelId: string, addingMessage: any) {
+export async function addFiles(
+  channelId: string,
+  addingMessage: Message.CommonMessage & MessageXFragment,
+  prefix = "",
+) {
   await client.connect();
 
   const files = [];
 
-  const findingFilesText = i18n.t("en", "finding_files_in_channel", {
-    channelId,
-  });
+  const findingFilesText =
+    prefix +
+    "\n\n" +
+    i18n.t("en", "finding_files_in_channel", {
+      channelId,
+    });
   addingMessage.editText(findingFilesText);
   Logger.send(findingFilesText);
 
@@ -90,17 +105,20 @@ async function addFiles(channelId: string, addingMessage: any) {
     }
 
     if (files.length !== 0 && files.length % 500 === 0) {
-      const foundFilesText = i18n.t("en", "found_files_in_channel", {
-        filesCount: files.length,
-        channelId,
-      });
+      const foundFilesText =
+        prefix +
+        "\n\n" +
+        i18n.t("en", "found_files_in_channel", {
+          filesCount: files.length,
+          channelId,
+        });
       addingMessage.editText(foundFilesText);
       Logger.send(foundFilesText);
     }
 
     files.push({
       messageId: message.id,
-      caption: message.message || message.file.name,
+      caption: message.message || (message.file.name as string),
       channelId,
       fileSize: Math.trunc(
         parseInt(message.file.size?.toString() || "") / 1024 / 1024,
@@ -108,8 +126,11 @@ async function addFiles(channelId: string, addingMessage: any) {
     });
   }
 
-  await client.disconnect();
-  await db.insert(filesTable).values(files);
+  if (files.length === 0)
+    throw new Error("No files found in the given channel!");
+
+  // await client.disconnect();
+  await insertFilesInChunks(files);
 
   return files;
 }

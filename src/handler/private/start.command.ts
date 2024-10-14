@@ -1,14 +1,16 @@
 import {
+  type CommandContext,
   Composer,
   InlineKeyboard,
   InputFile,
-  type CommandContext,
 } from "grammy";
 
-import type { BotContext } from "#/types";
-
-import { Commands } from "#/util/commands";
 import { env } from "#/config/env";
+import type { BotContext } from "#/types";
+import { Commands } from "#/util/commands";
+
+import { sendAllFiles } from "./send-all-files";
+import { sendFiles } from "./send-file";
 
 const composer = new Composer<BotContext>();
 
@@ -20,19 +22,21 @@ composer.command("start", async (context) => {
     const inlineKeyboard = await generateRequiredChatButtons(context);
     inlineKeyboard.url(
       "Try again",
-      `t.me/${context.me.username}?start=${context.match}`
+      `t.me/${context.me.username}?start=${context.match}`,
     );
     return context.replyWithPhoto(
       new InputFile(`src/assets/images/caution.jpg`),
       {
         caption: context.t("join_required_chats"),
         reply_markup: inlineKeyboard,
-      }
+      },
     );
   }
 
-  // if (context.match.startsWith("send-")) return sendFiles(context);
-  // if (context.match.startsWith("sendall-")) return sendAllFiles(context);
+  if (context.match.startsWith("send-")) return sendFiles(context);
+  console.log(context.match);
+
+  if (context.match.startsWith("sendall-")) return sendAllFiles(context);
 });
 
 Commands.addNewCommand("start", "Start the bot!");
@@ -40,12 +44,10 @@ Commands.addNewCommand("start", "Start the bot!");
 export const startCommand = composer;
 
 async function welcomeUser(context: CommandContext<BotContext>) {
-  let caption = env.WELCOME_MESSAGE;
+  const caption = env.WELCOME_MESSAGE;
 
   let inlineKeyboard;
   if (env.REQUIRED_CHATS_TO_JOIN.length > 0) {
-    // caption += `\n${context.t("join_required_chat_message")}`;
-
     inlineKeyboard = await generateRequiredChatButtons(context);
   }
 
@@ -68,7 +70,7 @@ const userInRequiredChats = async (context: CommandContext<BotContext>) => {
 type Channel = { title: string; invite_link: string };
 
 async function generateRequiredChatButtons(
-  context: CommandContext<BotContext>
+  context: CommandContext<BotContext>,
 ) {
   const inlineKeyboard = new InlineKeyboard();
   for (const requiredChat of env.REQUIRED_CHATS_TO_JOIN) {

@@ -5,33 +5,41 @@
   "scripts": {
     "start": "bun run src/index.ts",
     "dev": "bun run --watch src/index.ts",
-    "generate": "drizzle-kit generate:pg",
+    "generate": "drizzle-kit generate",
     "migrate": "bun run src/drizzle/migrate.ts",
     "studio": "bunx drizzle-kit studio",
-    "generate-session": "bun run src/util/generate-string-session.ts"
+    "generate-session": "bun run src/util/generate-string-session.ts",
+    "kit-up": "bunx drizzle-kit up"
   },
   "devDependencies": {
+    "@eslint/js": "^9.12.0",
+    "@trivago/prettier-plugin-sort-imports": "^4.3.0",
     "@types/bun": "latest",
-    "drizzle-kit": "^0.21.4"
+    "drizzle-kit": "^0.24.0",
+    "eslint": "^9.12.0",
+    "globals": "^15.11.0",
+    "typescript-eslint": "^8.8.1"
   },
   "peerDependencies": {
     "typescript": "^5.0.0"
   },
   "dependencies": {
-    "@grammyjs/auto-retry": "^2.0.1",
+    "@grammyjs/auto-retry": "^2.0.2",
     "@grammyjs/hydrate": "^1.4.1",
     "@grammyjs/i18n": "^1.0.2",
     "@grammyjs/parse-mode": "^1.10.0",
     "@grammyjs/runner": "^2.0.3",
     "@grammyjs/transformer-throttler": "^1.2.1",
-    "@inquirer/prompts": "^5.0.4",
-    "drizzle-orm": "^0.30.10",
-    "grammy": "^1.24.0",
+    "@inquirer/prompts": "^5.3.8",
+    "drizzle-orm": "^0.33.0",
+    "fuse.js": "^7.0.0",
+    "grammy": "^1.28.0",
     "input": "^1.0.1",
-    "pg": "^8.11.5",
+    "meilisearch": "^0.44.1",
+    "pg": "^8.12.0",
     "postgres": "^3.4.4",
     "telegraf-middleware-console-time": "^2.1.0",
-    "telegram": "^2.21.2",
+    "telegram": "^2.23.10",
     "zod": "^3.23.8"
   }
 }

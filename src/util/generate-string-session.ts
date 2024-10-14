@@ -1,6 +1,6 @@
 import { TelegramClient } from "telegram";
-import { StringSession } from "telegram/sessions";
 import { input } from "@inquirer/prompts";
+import { StringSession } from "telegram/sessions";
 
 const apiId = await input({ message: "Enter your API ID" });
 const apiHash = await input({ message: "Enter your API Hash" });
@@ -11,7 +11,8 @@ const client = new TelegramClient(stringSession, Number(apiId), apiHash, {
 });
 
 await client.start({
-  phoneNumber: async () => await input({ message: "Enter your phone number" }),
+  phoneNumber: async () =>
+    await input({ message: "Enter your phone number with country code" }),
   password: async () => await input({ message: "Enter your password" }),
   phoneCode: async () =>
     await input({ message: "Enter the code that you recieved" }),

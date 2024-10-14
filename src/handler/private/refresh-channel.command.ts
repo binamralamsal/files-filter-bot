@@ -10,8 +10,10 @@ import { cleanChannelID } from "#/util/clean-channel-id";
 import { Commands } from "#/util/commands";
 import { Logger } from "#/util/logger";
 
+import { addFiles } from "./add-channel.command";
+
 const composer = new Composer<BotContext>();
-composer.command("del", async (context) => {
+composer.command("refresh", async (context) => {
   const { message } = context.update;
 
   if (!message) return;
@@ -31,18 +33,18 @@ composer.command("del", async (context) => {
   });
   if (!fileFromSameChannel) {
     return await context.reply(
-      context.t("channel_not_found_delete", {
+      context.t("channel_not_found_refresh", {
         channelId: cleanedChannelId,
       }),
     );
   }
-
-  const deletingMessageText = context.t("deleting_channel", {
+  let refreshingMessageText = context.t("refreshing_channel_deleting", {
     channelId: cleanedChannelId,
     chatId,
   });
-  Logger.send(deletingMessageText);
-  const deletingMessage = await context.reply(deletingMessageText);
+
+  Logger.send(refreshingMessageText);
+  const refreshingMessage = await context.reply(refreshingMessageText);
 
   try {
     await deleteFilesByChannelId(cleanedChannelId);
@@ -56,16 +58,38 @@ composer.command("del", async (context) => {
     });
 
     Logger.send(errorMessage);
-    return await deletingMessage.editText(errorMessage);
+    return await refreshingMessage.editText(errorMessage);
   }
 
-  const deletingFinishedMessage = context.t("deleting_finished", {
+  refreshingMessageText = context.t("refreshing_channel_adding", {
+    channelId: cleanedChannelId,
+  });
+  Logger.send(refreshingMessageText);
+  await refreshingMessage.editText(refreshingMessageText);
+
+  try {
+    await addFiles(cleanedChannelId, refreshingMessage, refreshingMessageText);
+  } catch (error) {
+    let errorReason = "Something happened";
+    if (error instanceof Error) {
+      errorReason = error.message;
+    }
+
+    const errorMessage = context.t("error_while_adding_files", {
+      errorMessage: errorReason,
+    });
+
+    Logger.send(errorMessage);
+    return await refreshingMessage.editText(errorMessage);
+  }
+
+  const deletingFinishedMessage = context.t("refreshing_finished", {
     channelId: cleanedChannelId,
   });
   Logger.send(deletingFinishedMessage);
-  await deletingMessage.editText(deletingFinishedMessage);
+  await refreshingMessage.editText(deletingFinishedMessage);
 });
 
-Commands.addNewCommand("del", "Deletes specific channel from database");
+Commands.addNewCommand("refresh", "Refreshes specific channel from database");
 
-export const deleteChannelCommand = composer;
+export const refreshChannelCommand = composer;

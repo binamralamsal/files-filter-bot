@@ -6,137 +6,141 @@ bot_started=
   Now, Bot is up and running!!!
 
 welcome_message_caption=
-  > Welcome here ✨
+  <blockquote>Welcome here ✨</blockquote>
 
-  We are happy to see you here\.
+  We are happy to see you here.
 
-  We are a Brand who provide all kind of content to members with no cost\.
-
+  We are a Brand who provide all kind of content to members with no cost.
 
 join_required_chats=
   ⚠️ Caution:- 
-  > For Getting Your Files, First You Have to Join Listed "Channels/Groups" Given Below👇🏻
+  
+  <blockquote>For Getting Your Files, First You Have to Join Listed "Channels/Groups" Given Below👇🏻</blockquote>
 
 join_required_chat_message=
-  > Don't forget to join channels/groups given below and get what you dream in your life. ✌🏻
+  <blockquote>Don't forget to join channels/groups given below and get what you dream in your life. ✌🏻</blockquote>
 
 users_scanned=
-  > Total number of users scanned: { $usersLength }
+  <blockquote>Total number of users scanned: { $usersLength }</blockquote>
 
 no_message_to_broadcast=
-  > No message to broadcast\! 
+  <blockquote>No message to broadcast!</blockquote>
 
-  Please mention the message that you want to broadcast
+  Please mention the message that you want to broadcast.
 
 no_users_to_broadcast=
-  Not enough users are recorded yet\!
+  Not enough users are recorded yet!
 
-  > Please try again later
-
+  <blockquote>Please try again later</blockquote>
 
 broadcasting_message=
-  > Broadcasting your message to { $length } members
+  <blockquote>Broadcasting your message to { $length } members</blockquote>
 
 broadcasting_progress=
-  > Broadcast in progress\!
+  <blockquote>Broadcast in progress!</blockquote>
 
-  Estimated time: `{ $estimatedTime }`
-  Total Users: `{ $length }`
-  Success: `{ $successCount }`
-  Blocked: `{ $blockedCount }`
-  Deleted: `{ $unknownErrorCount }`
+  Estimated time: <code>{ $estimatedTime }</code>
+  Total Users: <code>{ $length }</code>
+  Success: <code>{ $successCount }</code>
+  Blocked: <code>{ $blockedCount }</code>
+  Deleted: <code>{ $unknownErrorCount }</code>
 
 broadcast_complete=
-  > Broadcast completed\!
+  <blockquote>Broadcast completed!</blockquote>
 
-  Completed in: `{ $time }`
-  Total Users: `{ $length }`
-  Success: `{ $successCount }`
-  Blocked: `{ $blockedCount }`
-  Deleted: `{ $unknownErrorCount }`
+  Completed in: <code>{ $time }</code>
+  Total Users: <code>{ $length }</code>
+  Success: <code>{ $successCount }</code>
+  Blocked: <code>{ $blockedCount }</code>
+  Deleted: <code>{ $unknownErrorCount }</code>
 
 welcome_message_channels_given=
-  Don't forget to join channels given below and get what you dream in your life\. ✌🏻
+  Don't forget to join channels given below and get what you dream in your life. ✌🏻
 
 channel_already_exists=
-  Sorry but that channel already exists\.
+  Sorry but that channel already exists.
 
-  Please use `/del channelId` if you want to delete or add again\.
+  Please use <code>/del channelId</code> if you want to delete or add again.
 
 adding_channel=
-  > Adding files from `{ $channelId }` in database
+  <blockquote>Adding files from <code>{ $channelId }</code> in database</blockquote>
 
 error_while_adding_files=
-  `{ $errorMessage }`
+  <code>{ $errorMessage }</code>
 
-  Error while adding files\. Channel not found\!
+  Error while adding files. It maybe because channel doesn't exist.
 
-  Be sure the account that you are using for bot is added to the channel that you are trying to add\.
+  Be sure the account that you are using for bot is added to the channel that you are trying to add.
 
 adding_finished=
-  > Added { $fileLength } files from `{ $channelId }` successfully\.
+  <blockquote>Added { $fileLength } files from <code>{ $channelId }</code> successfully.</blockquote>
 
 finding_files_in_channel=
-  > Finding for files in `{ $channelId }`
+  <blockquote>Finding for files in <code>{ $channelId }</code></blockquote>
 
 found_files_in_channel=
-  > Found { $filesCount } files from `{ $channelId }`
+  <blockquote>Found { $filesCount } files from <code>{ $channelId }</code></blockquote>
 
 no_channels_found=
-  > No channels found\!
+  <blockquote>No channels found!</blockquote>
 
 channel_not_found_delete=
-  > Channel that you are trying to delete i\.e\. `{ $channelId }` not found\!
+  <blockquote>Channel that you are trying to delete i.e. <code>{ $channelId }</code> not found!</blockquote>
+
+channel_not_found_refresh=
+  <blockquote>Channel that you are trying to refresh i.e. <code>{ $channelId }</code> not found!</blockquote>
+
+refreshing_all_channels_deleting=
+  <blockquote>Refreshing all channels</blockquote>
+
+  <strong>Status</strong>: Deleting { $totalChannels } channels
+
+refreshing_channel_deleting=
+  <blockquote>Refreshing { $channelId }</blockquote>
+
+  <strong>Status</strong>: Deleting channel
+
+refreshing_all_channels_adding=
+  <blockquote>Refreshing all channels</blockquote>
+
+  <strong>Status</strong>: Adding (<code>{ $channelId }</code>)
+  <strong>{ $remainingChannels }/{ $totalChannels } Done</strong>
+
+refreshing_channel_adding=
+  <blockquote>Refreshing { $channelId } channel.</blockquote>
+
+  <strong>Status</strong>: Adding channel
+
+refreshing_all_finished=
+  All channels refreshed successfully!
+
+  Total Channels refreshed: { $totalChannels }
+
+refreshing_finished=
+  <blockquote><code>{ $channelId }</code> refreshed successfully!</blockquote>
 
 deleting_channel=
-  > Deleting files of `{ $channelId }` from database\.
+  <blockquote>Deleting files of <code>{ $channelId }</code> from database.</blockquote>
 
 error_while_deleting_files=
-  `{ $errorMessage }`
+  <code>{ $errorMessage }</code>
 
-  Error while deleting channel\. Please check logs for more info\.
-
+  Error while deleting channel. Please check logs for more info.
 
 deleting_finished=
-  > `{ $channelId }` deleted Successfully\!
+  <blockquote><code>{ $channelId }</code> deleted Successfully!</blockquote>
 
 deleting_all_channels= 
-  > Deleting all channels from database\.
+  <blockquote>Deleting all channels from database.</blockquote>
 
 deleting_all_finished=
-  > All channels deleted Successfully\.
+  <blockquote>All channels deleted Successfully.</blockquote>
 
 pass_valid_channel_id=
-  > Please pass a valid channelID after the command 
+  <blockquote>Please pass a valid channelID after the command</blockquote>
 
-# refreshing_all_channels_deleting: |
-#   Refreshing all channels in ${chatName} (<code>${chatId}</code>)
-
-#   <strong>Status</strong>: Deleting ${totalChannels} channels
-
-# refreshing_channel_deleting: |
-#   Refreshing ${channelID} channels in ${chatName} (<code>${chatId}</code>)
-
-#   <strong>Status</strong>: Deleting channel
-
-# refreshing_all_channels_adding: |
-#   Refreshing all channels in ${chatName} (<code>${chatId}</code>)
-
-#   <strong>Status</strong>: Adding (<code>${channelId}</code>)
-#   <strong>${remainingChannels}/${totalChannels} Done</strong>
-
-# refreshing_channel_adding: |
-#   Refreshing ${channelID} channel in ${chatName} (<code>${chatId}</code>)
-
-#   <strong>Status</strong>: Adding channel
-
-# refreshing_all_finished: |
-#   All channels refreshed successfully!
-
-#   Total Channels refreshed: ${totalChannels}
-
-# refreshing_finished: |
-#   ${channelID} refreshed successfully!
+filter_stats_head_title=
+  <blockquote>All channels added to the bot are:</blockquote>
 
 
 # error: |

@@ -1,0 +1,1 @@
+CREATE INDEX IF NOT EXISTS "caption_idx" ON "files" USING btree ("caption");

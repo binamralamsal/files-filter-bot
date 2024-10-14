@@ -1,6 +1,7 @@
-import i18n from "#/lib/i18n";
 import { StringSession } from "telegram/sessions";
 import { z } from "zod";
+
+import i18n from "#/lib/i18n";
 
 const envSchema = z.object({
   BOT_TOKEN: z.string(),
@@ -31,7 +32,18 @@ const envSchema = z.object({
     .string()
     .trim()
     .transform((value) => new StringSession(value)),
+  LOG_CHANNEL: z.string().optional(),
   NODE_ENV: z.enum(["development", "production"]).default("development"),
+  MEILISEARCH_HOST: z.string().default("http://localhost:7700"),
+  MEILISEARCH_MASTER_KEY: z.string(),
+  MEILISEARCH_INDEX: z.string().transform((value) => `${value}_files`),
+  RESULTS_PER_PAGE: z.coerce.number().default(10),
+  SENDALL_PER_PAGE: z.coerce.boolean().default(true),
+  BLOCKED_WORDS: z
+    .string()
+    .default("")
+    .transform((value) => value.split(" ")),
+  AUTHORIZED_CHAT_IDS: z.string().transform((value) => value.split(" ")),
 });
 
 export const env = envSchema.parse(process.env);

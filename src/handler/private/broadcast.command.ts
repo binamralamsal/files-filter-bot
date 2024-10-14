@@ -1,11 +1,13 @@
+import { Composer } from "grammy";
+
+import { eq } from "drizzle-orm";
+
 import { db } from "#/drizzle/db";
 import { usersTable } from "#/drizzle/schema";
 import type { BotContext } from "#/types";
 import { Commands } from "#/util/commands";
 import { formatDuration } from "#/util/format-duration";
 import { Logger } from "#/util/logger";
-import { eq } from "drizzle-orm";
-import { Composer } from "grammy";
 
 const composer = new Composer<BotContext>();
 

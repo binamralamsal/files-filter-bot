@@ -1,10 +1,12 @@
+import { Composer } from "grammy";
+
+import { count } from "drizzle-orm";
+
 import { db } from "#/drizzle/db";
 import { filesTable } from "#/drizzle/schema";
 import type { BotContext } from "#/types";
 import { Commands } from "#/util/commands";
 import { Logger } from "#/util/logger";
-import { count } from "drizzle-orm";
-import { Composer } from "grammy";
 
 const composer = new Composer<BotContext>();
 composer.command("filterstats", async (context) => {
@@ -13,7 +15,7 @@ composer.command("filterstats", async (context) => {
   )[0];
   if (filesCount === 0) return context.reply(context.t("no_channels_found"));
 
-  let infoMessage = "> All channels added to this group are:\n";
+  let infoMessage = context.t("filter_stats_head_title") + "\n";
 
   const data = (
     await db
@@ -23,14 +25,15 @@ composer.command("filterstats", async (context) => {
 
   for (const [index, channel] of data.entries()) {
     try {
+      // Bot must be in the channel to get the channel name.
       const data = await context.api.getChat(channel);
-      infoMessage += `${+index + 1}\\\) ${data.title} \`${data.id}\`\n`;
+      infoMessage += `${index + 1}. ${data.title} <code>${data.id}</code>\n`;
     } catch (error) {
       let errorMessage = "Something Happened";
       if (error instanceof Error) errorMessage = error.message;
 
       Logger.send(errorMessage);
-      infoMessage += `${+index + 1}\\\) \`${channel}\`\n`;
+      infoMessage += `${index + 1}. <code>${channel}</code>\n`;
     }
   }
   Logger.send(infoMessage);

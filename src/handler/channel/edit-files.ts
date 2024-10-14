@@ -1,7 +1,6 @@
-import { db } from "#/drizzle/db";
-import { filesTable, usersTable } from "#/drizzle/schema";
-import { and, eq } from "drizzle-orm";
 import { Composer } from "grammy";
+
+import { updateFileCaption } from "#/use-cases/update-file-caption";
 
 const composer = new Composer();
 composer.on(
@@ -19,16 +18,12 @@ composer.on(
     const fileCaption = caption || document?.file_name || video?.file_name;
     if (!fileCaption) return;
 
-    await db
-      .update(filesTable)
-      .set({ caption: fileCaption })
-      .where(
-        and(
-          eq(filesTable.channelId, String(channelId)),
-          eq(filesTable.messageId, messageId)
-        )
-      );
-  }
+    await updateFileCaption({
+      caption: fileCaption,
+      channelId: String(channelId),
+      messageId,
+    });
+  },
 );
 
 export const editFiles = composer;

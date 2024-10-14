@@ -1,10 +1,13 @@
+import { Composer } from "grammy";
+
+import { count } from "drizzle-orm";
+
 import { db } from "#/drizzle/db";
 import { filesTable } from "#/drizzle/schema";
 import type { BotContext } from "#/types";
+import { deleteAllFiles } from "#/use-cases/delete-all-files";
 import { Commands } from "#/util/commands";
 import { Logger } from "#/util/logger";
-import { count } from "drizzle-orm";
-import { Composer } from "grammy";
 
 const composer = new Composer<BotContext>();
 // TODO: Ask for confirmations before deleting all channels
@@ -27,7 +30,7 @@ composer.command("delall", async (context) => {
   const deletingMessage = await context.reply(deletingMessageText);
 
   try {
-    await db.delete(filesTable);
+    await deleteAllFiles();
   } catch (error) {
     let errorReason = "Something happened";
     if (error instanceof Error) errorReason = error.message;
