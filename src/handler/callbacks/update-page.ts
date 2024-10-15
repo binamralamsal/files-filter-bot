@@ -29,7 +29,10 @@ export async function updatePage(
 
     if (!results) return;
 
-    await context.editMessageText(results, { reply_markup: inlineKeyboard });
+    await context.editMessageText(results, {
+      reply_markup: inlineKeyboard,
+      link_preview_options: { is_disabled: true },
+    });
     await context.answerCallbackQuery();
   } catch {
     await context.answerCallbackQuery({
