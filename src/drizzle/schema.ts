@@ -23,7 +23,7 @@ export const filesTable = pgTable(
 
 export const usersTable = pgTable("users", {
   id: serial("id").primaryKey(),
-  chatId: varchar("chat_id").notNull(),
+  chatId: varchar("chat_id").unique().notNull(),
   name: varchar("name").notNull(),
   username: varchar("username"),
 });
