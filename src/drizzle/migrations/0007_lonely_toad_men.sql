@@ -1,0 +1,1 @@
+CREATE UNIQUE INDEX IF NOT EXISTS "unique_user_query" ON "user_file_downloads" USING btree ("user_id","query_hash");

@@ -5,6 +5,7 @@ import {
   serial,
   text,
   timestamp,
+  uniqueIndex,
   varchar,
 } from "drizzle-orm/pg-core";
 
@@ -28,11 +29,22 @@ export const usersTable = pgTable("users", {
   username: varchar("username"),
 });
 
-export const userFilesDownloadsTable = pgTable("user_file_downloads", {
-  id: serial("id").primaryKey(),
-  userId: varchar("user_id").notNull(),
-  queryHash: varchar("query_hash").notNull().unique(),
-  downloadTime: timestamp("download_time", { withTimezone: true })
-    .defaultNow()
-    .notNull(),
-});
+export const userFilesDownloadsTable = pgTable(
+  "user_file_downloads",
+  {
+    id: serial("id").primaryKey(),
+    userId: varchar("user_id").notNull(),
+    queryHash: varchar("query_hash").notNull().unique(),
+    downloadTime: timestamp("download_time", { withTimezone: true })
+      .defaultNow()
+      .notNull(),
+  },
+  (table) => {
+    return {
+      uniqueUserQuery: uniqueIndex("unique_user_query").on(
+        table.userId,
+        table.queryHash,
+      ),
+    };
+  },
+);
