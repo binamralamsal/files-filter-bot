@@ -6,7 +6,6 @@ import type { BotContext } from "#/types";
 import { handleDownloadLimit } from "#/use-cases/download-manager";
 import { decodeString } from "#/util/base64-url";
 import { timeToWords } from "#/util/time-to-words";
-import { toFancyText } from "#/util/to-fancy-text";
 
 export async function sendFiles(context: CommandContext<BotContext>) {
   const [, data] = context.match.split("-");
@@ -20,7 +19,7 @@ export async function sendFiles(context: CommandContext<BotContext>) {
   if (limitReached) {
     return context.replyWithPhoto(
       new InputFile("src/assets/images/limit-reached.jpg"),
-      { caption: toFancyText(context.t("downloads_limit_reached")) },
+      { caption: context.t("downloads_limit_reached") },
     );
   }
 
