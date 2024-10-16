@@ -29,7 +29,9 @@ export async function getSearchResultsMessageText(data: {
   );
 
   inlineKeyboard.url(
-    `Send All Files (${env.SENDALL_PER_PAGE ? results.hits.length : results.estimatedTotalHits})`,
+    toFancyText(
+      `Send All Files (${env.SENDALL_PER_PAGE ? results.hits.length : results.estimatedTotalHits})`,
+    ),
     // @ts-expect-error Meilisearch types fault
     `https://t.me/${data.username}?start=sendall-${results.page}-${encodeString(data.query)}`,
   );
@@ -67,17 +69,23 @@ function createInlineKeyboard(page: number, query: string, totalPages: number) {
   const inlineKeyboard = new InlineKeyboard();
 
   if (page > 1) {
-    inlineKeyboard.text("⬅️ Back", `back ${encodeString({ page, query })}`);
+    inlineKeyboard.text(
+      toFancyText("⬅️ Back"),
+      `back ${encodeString({ page, query })}`,
+    );
   }
 
   if (totalPages > page) {
-    inlineKeyboard.text("Next ➡️", `next ${encodeString({ page, query })}`);
+    inlineKeyboard.text(
+      toFancyText("Next ➡️"),
+      `next ${encodeString({ page, query })}`,
+    );
   }
 
   inlineKeyboard.row();
 
   inlineKeyboard.text(
-    `📃 Pages ${page}/${totalPages}`,
+    toFancyText(`📃 Pages ${page}/${totalPages}`),
     `pages ${encodeString({ page, query })}`,
   );
 

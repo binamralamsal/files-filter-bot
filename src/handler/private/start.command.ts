@@ -34,8 +34,6 @@ composer.command("start", async (context) => {
   }
 
   if (context.match.startsWith("send-")) return sendFiles(context);
-  console.log(context.match);
-
   if (context.match.startsWith("sendall-")) return sendAllFiles(context);
 });
 

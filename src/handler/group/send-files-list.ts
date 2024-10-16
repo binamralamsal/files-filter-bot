@@ -1,6 +1,7 @@
 import { Composer } from "grammy";
 
 import { env } from "#/config/env";
+import { deleteMessageFromGroup } from "#/queues/delete-messages";
 import type { BotContext } from "#/types";
 import { getSearchResultsMessageText } from "#/use-cases/get-search-results";
 
@@ -21,11 +22,14 @@ composer.on(["message:text"], async (context) => {
   });
 
   if (results) {
-    await context.reply(results, {
+    const result = await context.reply(results, {
       reply_markup: inlineKeyboard,
       reply_parameters: { message_id: context.msgId },
       link_preview_options: { is_disabled: true },
     });
+
+    await deleteMessageFromGroup({ chatId, messageId: context.msgId });
+    await deleteMessageFromGroup({ chatId, messageId: result.message_id });
   }
 });
 

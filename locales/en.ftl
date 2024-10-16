@@ -149,61 +149,10 @@ downloads_limit_reached=
   <strong>⚉ Buy Premium : @AKImaxPremium_1</strong>
   <strong>⚉ Support :- @ImaxSupportBot</strong>
 
+deleting_warning=
+  <strong>⚠️ These Files Will Be Deleted In { $time }. Please Forward To Another Chat.
 
-# error: |
-#   <code>${errorStack}</code>
-    
-#   ${updateID && '<strong>Update ID</strong>:'} ${updateID}
-#   <strong>Message ID</strong>: ${messageID}
-#   <strong>Date</strong>: ${date}
-#   <strong>Text</strong>: <code>${text}</code>
-#   <strong>User</strong>: ${user}
-#   <strong>Chat</strong>: ${chat}
+  Agar Aapko Koi Bhi Movie Ya Series Apni Pasand Ki Quality/Fast Link Mein Chahiye, To Aap Hamara Premium Try Kar Sakte Ho..
 
-
-# channel_not_found_refresh: |
-#   Channel that you are trying to refresh i.e. <code>${channelID}</code> not found!
-
-# no_channelId_given: |
-#   Invalid command given!
-
-#   Missing argument [channel-id] after /refresh.
-
-# maintenance_mode_on: |
-#   Maintenance mode is <strong>turned on</strong>! Please check back after some time.
-
-#   ${reason && 'Reason: '} ${reason}
-
-# maintenance_mode_off: |
-#   Finally, maintenance break is over! 🥳
-
-# invalid_maintenance_instruction: |
-#   Invalid Instruction Passed to <code>/maintenance</code> command.
-
-#   Valid instructions are: <code>on</code> and <code>off</code>
-
-# maintenance_mode_not_turned_on: |
-#   Maintenance Mode is not turned on!
-
-#   Please use <code>/maintenance on</code> if you want to turn on maintenance mode.
-
-# maintenance_mode_already_turned_on: |
-#   Maintenanance Mode is already turned on!
-
-#   Please use <code>/maintenance off</code> if you want to turn off maintenance mode.
-
-# no_files_with_empty_cap: |
-#   No files with empty caption found!
-
-# sending_files_with_empty_cap: |
-#   I am now sending all files having empty caption.
-
-#   Total Files: ${length}
-
-# files_with_empty_cap_sent: |
-#   These were all the files having empty caption!
-
-# bot_not_member_of_channel: |
-#   Bot is not member of <code>${channelId}</code>
-
-#   Please add bot so that bot can share files.
+  ⚉ Buy Premium : @AKImaxPremium_1
+  ⚉ Support :- @ImaxSupportBot</strong>

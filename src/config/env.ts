@@ -45,6 +45,11 @@ const envSchema = z.object({
     .transform((value) => value.split(" ")),
   AUTHORIZED_CHAT_IDS: z.string().transform((value) => value.split(" ")),
   DOWNLOADS_PER_DAY: z.coerce.number().optional(),
+  REDIS_HOST: z.string().default("localhost"),
+  REDIS_PORT: z.coerce.number().default(6379),
+  REDIS_WORKER_PREFIX: z.string(),
+  DELETE_TIME_IN_DM: z.string().optional(),
+  DELETE_TIME_IN_GROUP: z.string().optional(),
 });
 
 export const env = envSchema.parse(process.env);
