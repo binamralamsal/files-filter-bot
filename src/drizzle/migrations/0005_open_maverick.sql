@@ -1,0 +1,1 @@
+ALTER TABLE "user_file_downloads" ALTER COLUMN "download_time" SET NOT NULL;

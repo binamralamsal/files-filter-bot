@@ -59,7 +59,7 @@ composer.command("broadcast", async (context) => {
         `Failed to copy message to user ${user.chatId}: ${errorMessage}`,
       );
 
-      await db.delete(usersTable).where(eq(usersTable.chatId, user.chatId));
+      db.delete(usersTable).where(eq(usersTable.chatId, user.chatId));
       continue;
     } finally {
       doneCount++;

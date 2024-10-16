@@ -44,6 +44,7 @@ const envSchema = z.object({
     .default("")
     .transform((value) => value.split(" ")),
   AUTHORIZED_CHAT_IDS: z.string().transform((value) => value.split(" ")),
+  DOWNLOADS_PER_DAY: z.coerce.number().optional(),
 });
 
 export const env = envSchema.parse(process.env);

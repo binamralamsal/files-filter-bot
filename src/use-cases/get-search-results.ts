@@ -10,6 +10,44 @@ import { toFancyText } from "#/util/to-fancy-text";
 
 import type { FileResult } from "./insert-files";
 
+export async function getSearchResultsMessageText(data: {
+  query: string;
+  page?: number;
+  username: string;
+}) {
+  const page = data.page || 1;
+  const results = await getSearchResults(data.query, page);
+
+  if (results.hits.length === 0) return { results: null };
+  const queryHash = generateQueryHash(data.query);
+
+  const inlineKeyboard = createInlineKeyboard(
+    page,
+    data.query,
+    // @ts-expect-error Meilisearch types fault
+    results.totalPages,
+  );
+
+  inlineKeyboard.url(
+    `Send All Files (${env.SENDALL_PER_PAGE ? results.hits.length : results.estimatedTotalHits})`,
+    // @ts-expect-error Meilisearch types fault
+    `https://t.me/${data.username}?start=sendall-${results.page}-${encodeString(data.query)}`,
+  );
+
+  const formattedResults = results.hits
+    .map((file) => {
+      const caption = formatCaption(file.text);
+      const link = generateFileLink(data.username, queryHash, file);
+      return `[${toFancyText(formatFileSize(file.fileSize))}] — <a href="${link}">${toFancyText(caption)}</a>`;
+    })
+    .join("\n\n");
+
+  return {
+    results: formattedResults,
+    inlineKeyboard,
+  };
+}
+
 export async function getSearchResults(
   query: string,
   page: number,
@@ -64,56 +102,22 @@ function formatCaption(text: string, maxLength: number = 180): string {
   );
 }
 
+export function generateQueryHash(query: string) {
+  return crypto
+    .createHash("sha256")
+    .update(query)
+    .digest("base64url")
+    .slice(0, 5);
+}
+
 function generateFileLink(
   username: string,
   queryHash: string,
   file: FileResult,
 ): string {
   return `https://t.me/${username}?start=send-${encodeString({
-    q: queryHash.slice(0, 5),
+    q: queryHash,
     m: file.messageId,
     c: file.channelId,
   })}`;
-}
-
-export async function getSearchResultsMessageText(data: {
-  query: string;
-  page?: number;
-  username: string;
-}) {
-  const page = data.page || 1;
-  const results = await getSearchResults(data.query, page);
-
-  if (results.hits.length === 0) return { results: null };
-
-  const queryHash = crypto
-    .createHash("sha256")
-    .update(data.query)
-    .digest("base64url");
-
-  const inlineKeyboard = createInlineKeyboard(
-    page,
-    data.query,
-    // @ts-expect-error Meilisearch types fault
-    results.totalPages,
-  );
-
-  inlineKeyboard.url(
-    `Send All Files (${env.SENDALL_PER_PAGE ? results.hits.length : results.estimatedTotalHits})`,
-    // @ts-expect-error Meilisearch types fault
-    `https://t.me/${data.username}?start=sendall-${results.page}-${encodeString(data.query)}`,
-  );
-
-  const formattedResults = results.hits
-    .map((file) => {
-      const caption = formatCaption(file.text);
-      const link = generateFileLink(data.username, queryHash, file);
-      return `[${toFancyText(formatFileSize(file.fileSize))}] — <a href="${link}">${toFancyText(caption)}</a>`;
-    })
-    .join("\n\n");
-
-  return {
-    results: formattedResults,
-    inlineKeyboard,
-  };
 }

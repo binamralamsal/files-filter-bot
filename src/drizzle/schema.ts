@@ -4,6 +4,7 @@ import {
   pgTable,
   serial,
   text,
+  timestamp,
   varchar,
 } from "drizzle-orm/pg-core";
 
@@ -22,8 +23,16 @@ export const filesTable = pgTable(
 );
 
 export const usersTable = pgTable("users", {
-  id: serial("id").primaryKey(),
   chatId: varchar("chat_id").unique().notNull(),
   name: varchar("name").notNull(),
   username: varchar("username"),
+});
+
+export const userFilesDownloadsTable = pgTable("user_file_downloads", {
+  id: serial("id").primaryKey(),
+  userId: varchar("user_id").notNull(),
+  queryHash: varchar("query_hash").notNull().unique(),
+  downloadTime: timestamp("download_time", { withTimezone: true })
+    .defaultNow()
+    .notNull(),
 });

@@ -142,6 +142,13 @@ pass_valid_channel_id=
 filter_stats_head_title=
   <blockquote>All channels added to the bot are:</blockquote>
 
+downloads_limit_reached=
+  ⚠️ Today Limit End
+
+  <strong>⚉ Join Premium For Unlimited Movie</strong>
+  <strong>⚉ Buy Premium : @AKImaxPremium_1</strong>
+  <strong>⚉ Support :- @ImaxSupportBot</strong>
+
 
 # error: |
 #   <code>${errorStack}</code>

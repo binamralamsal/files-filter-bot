@@ -1,0 +1,1 @@
+ALTER TABLE "user_file_downloads" ADD CONSTRAINT "user_file_downloads_query_hash_unique" UNIQUE("query_hash");
