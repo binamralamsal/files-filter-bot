@@ -24,7 +24,10 @@ composer.on(["message:text"], async (context) => {
   if (results) {
     const result = await context.reply(results, {
       reply_markup: inlineKeyboard,
-      reply_parameters: { message_id: context.msgId },
+      reply_parameters: {
+        message_id:
+          context.message.reply_to_message?.message_id || context.msgId,
+      },
       link_preview_options: { is_disabled: true },
     });
 
