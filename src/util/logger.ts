@@ -14,6 +14,6 @@ export class Logger {
     env.LOG_CHANNEL &&
       bot.api.sendMessage(env.LOG_CHANNEL, message, {
         parse_mode: "HTML",
-      });
+      }).catch(() => {});
   }
 }
