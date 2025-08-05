@@ -2,24 +2,30 @@ import { type CallbackQueryContext, InlineKeyboard } from "grammy";
 
 import type { BotContext } from "#/types";
 import { getSearchResults } from "#/use-cases/get-search-results";
-import { decodeString, encodeString } from "#/util/base64-url";
 
 export async function showPagesList(context: CallbackQueryContext<BotContext>) {
   try {
-    if (!context.update.callback_query.data) return;
-    const [, encodedData] = context.update.callback_query.data.split(" ");
+    if (
+      !context.update.callback_query.data ||
+      !context.update.callback_query.message?.text
+    )
+      return;
 
-    const decodedData = decodeString<{ page: number; query: string }>(
-      encodedData,
-    );
-    const data = await getSearchResults(decodedData.query, decodedData.page);
+    const query =
+      context.update.callback_query.message.text.match(/\|(.*?)\|/s)?.[1];
+    if (!query) return;
+
+    const [, encodedData] = context.update.callback_query.data.split(" ");
+    const page = parseInt(encodedData);
+
+    const data = await getSearchResults(query, page);
 
     // @ts-expect-error idk how to get grammy types
     const totalPages = data.totalPages;
 
     if (totalPages === 1)
       return await context.answerCallbackQuery({
-        text: `Pages ${decodedData.page}/${totalPages}`,
+        text: `Pages ${page}/${totalPages}`,
         show_alert: true,
       });
 
@@ -30,10 +36,7 @@ export async function showPagesList(context: CallbackQueryContext<BotContext>) {
       if (rawInlineKeyboard[rawInlineKeyboard.length - 1].length === 8)
         inlineKeyboard.row();
 
-      inlineKeyboard.text(
-        `${i}`,
-        `gopage ${encodeString({ page: i, query: decodedData.query })}`,
-      );
+      inlineKeyboard.text(`${i}`, `gopage ${i}`);
     }
 
     await context.editMessageReplyMarkup({ reply_markup: inlineKeyboard });

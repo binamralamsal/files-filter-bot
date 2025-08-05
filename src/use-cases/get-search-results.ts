@@ -21,7 +21,7 @@ export async function getSearchResultsMessageText(data: {
   if (results.hits.length === 0) return { results: null };
   const queryHash = generateQueryHash(data.query);
 
-  const inlineKeyboard = createInlineKeyboard(
+  const inlineKeyboard = await createInlineKeyboard(
     page,
     data.query,
     // @ts-expect-error Meilisearch types fault
@@ -36,13 +36,15 @@ export async function getSearchResultsMessageText(data: {
     `https://t.me/${data.username}?start=sendall-${results.page}-${encodeString(data.query)}`,
   );
 
-  const formattedResults = results.hits
-    .map((file) => {
-      const caption = formatCaption(file.text);
-      const link = generateFileLink(data.username, queryHash, file);
-      return `[${toFancyText(formatFileSize(file.fileSize))}] — <a href="${link}">${toFancyText(caption)}</a>`;
-    })
-    .join("\n\n");
+  const formattedResults =
+    `${toFancyText("Results for")} |<code>${data.query}</code>|\n\n` +
+    results.hits
+      .map((file) => {
+        const caption = formatCaption(file.text);
+        const link = generateFileLink(data.username, queryHash, file);
+        return `[${toFancyText(formatFileSize(file.fileSize))}] — <a href="${link}">${toFancyText(caption)}</a>`;
+      })
+      .join("\n\n");
 
   return {
     results: formattedResults,
@@ -65,28 +67,26 @@ export async function getSearchResults(
     });
 }
 
-function createInlineKeyboard(page: number, query: string, totalPages: number) {
+async function createInlineKeyboard(
+  page: number,
+  query: string,
+  totalPages: number,
+) {
   const inlineKeyboard = new InlineKeyboard();
 
   if (page > 1) {
-    inlineKeyboard.text(
-      toFancyText("⬅️ Back"),
-      `back ${encodeString({ page, query })}`,
-    );
+    inlineKeyboard.text(toFancyText("⬅️ Back"), `back ${page}`);
   }
 
   if (totalPages > page) {
-    inlineKeyboard.text(
-      toFancyText("Next ➡️"),
-      `next ${encodeString({ page, query })}`,
-    );
+    inlineKeyboard.text(toFancyText("Next ➡️"), `next ${page}`);
   }
 
   inlineKeyboard.row();
 
   inlineKeyboard.text(
     toFancyText(`📃 Pages ${page}/${totalPages}`),
-    `pages ${encodeString({ page, query })}`,
+    `pages ${page}`,
   );
 
   return inlineKeyboard;

@@ -2,28 +2,35 @@ import type { CallbackQueryContext } from "grammy";
 
 import type { BotContext } from "#/types";
 import { getSearchResultsMessageText } from "#/use-cases/get-search-results";
-import { decodeString } from "#/util/base64-url";
 
 export async function updatePage(
   context: CallbackQueryContext<BotContext>,
   type: "back" | "next" | "current",
 ) {
   try {
-    if (!context.update.callback_query.data) return;
-    const [, data] = context.update.callback_query.data.split(" ");
+    if (
+      !context.update.callback_query.data ||
+      !context.update.callback_query.message?.text
+    )
+      return;
 
-    const queryData = decodeString<{ page: number; query: string }>(data);
+    const query =
+      context.update.callback_query.message.text.match(/\|(.*?)\|/s)?.[1];
+    if (!query) return;
+
+    const [, data] = context.update.callback_query.data.split(" ");
+    const currentPage = parseInt(data);
 
     const page =
       type === "back"
-        ? queryData.page - 1
+        ? currentPage - 1
         : type === "next"
-          ? queryData.page + 1
-          : queryData.page;
+          ? currentPage + 1
+          : currentPage;
 
     const { results, inlineKeyboard } = await getSearchResultsMessageText({
       page,
-      query: queryData.query,
+      query,
       username: context.me.username,
     });
 
