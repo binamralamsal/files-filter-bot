@@ -28,6 +28,7 @@ bot.api.config.use(parseMode("html"));
 bot.use(handlers);
 await Commands.setCommands();
 
+await bot.api.deleteWebhook({ drop_pending_updates: true });
 run(bot);
 Logger.send(i18n.t("en", "bot_started"));
 

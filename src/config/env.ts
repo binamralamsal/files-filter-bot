@@ -42,7 +42,12 @@ const envSchema = z.object({
   BLOCKED_WORDS: z
     .string()
     .default("")
-    .transform((value) => value.split(" ")),
+    .transform((value) =>
+      value
+        .split(",")
+        .map((word) => word.trim())
+        .filter(Boolean),
+    ),
   AUTHORIZED_CHAT_IDS: z.string().transform((value) => value.split(" ")),
   DOWNLOADS_PER_DAY: z.coerce.number().optional(),
   REDIS_HOST: z.string().default("localhost"),

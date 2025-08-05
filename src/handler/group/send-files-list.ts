@@ -38,8 +38,8 @@ composer.on(["message:text"], async (context) => {
 
 function isSearchQueryValid(searchQuery: string): boolean {
   if (env.BLOCKED_WORDS.length === 0) return true;
-  return !env.BLOCKED_WORDS.some((word) =>
-    searchQuery.toLowerCase().split(" ").includes(word.toLowerCase()),
+  return !env.BLOCKED_WORDS.some(
+    (word) => searchQuery.toLowerCase() === word.toLowerCase(),
   );
 }
 
