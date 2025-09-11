@@ -55,6 +55,10 @@ const envSchema = z.object({
   REDIS_WORKER_PREFIX: z.string(),
   DELETE_TIME_IN_DM: z.string().optional(),
   DELETE_TIME_IN_GROUP: z.string().optional(),
+  CUSTOM_API_ROOT: z
+    .string()
+    .url({ message: "CUSTOM_API_ROOT must be a valid URL" })
+    .default("https://api.telegram.org"), // default to official API
 });
 
 export const env = envSchema.parse(process.env);
