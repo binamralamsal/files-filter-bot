@@ -77,7 +77,6 @@ composer.command("broadcast", async (context) => {
             length: users.length,
             successCount: doneCount - unknownErrorCount - blockedCount,
             blockedCount,
-            unknownErrorCount,
             estimatedTime: formatDuration(estimatedTimeRemaining),
             doneCount,
           },
@@ -103,7 +102,7 @@ composer.command("broadcast", async (context) => {
     successCount: users.length - unknownErrorCount - blockedCount,
     blockedCount,
     doneCount,
-    unknownErrorCount,
+    deletedCount: failedUserIds.length,
     time: formatDuration(endTime.getTime() - startTime.getTime()),
   });
   Logger.send(broadcastCompletedMessage);
