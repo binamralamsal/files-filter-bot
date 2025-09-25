@@ -20,7 +20,6 @@ composer.command("broadcast", async (context) => {
   }
 
   const users = await db.query.usersTable.findMany();
-
   if (users.length === 0) {
     return context.reply(context.t("no_users_to_broadcast"));
   }
@@ -37,6 +36,8 @@ composer.command("broadcast", async (context) => {
 
   const startTime = new Date();
   let endTime: Date;
+
+  const failedUserIds: string[] = [];
 
   for (const user of users) {
     try {
@@ -59,13 +60,12 @@ composer.command("broadcast", async (context) => {
         `Failed to copy message to user ${user.chatId}: ${errorMessage}`,
       );
 
-      db.delete(usersTable).where(eq(usersTable.chatId, user.chatId));
+      failedUserIds.push(user.chatId);
       continue;
     } finally {
       doneCount++;
 
       endTime = new Date();
-
       const doneTime = endTime.getTime() - startTime.getTime();
       const totalEstimatedTime = (doneTime / doneCount) * users.length;
       const estimatedTimeRemaining = totalEstimatedTime - doneTime;
@@ -87,6 +87,13 @@ composer.command("broadcast", async (context) => {
         await broadcastingMessage.editText(broadcastingProgressMessageText);
       }
     }
+  }
+
+  if (failedUserIds.length > 0) {
+    Logger.send(`Deleting ${failedUserIds.length} failed users from database...`);
+    await db
+      .delete(usersTable)
+      .where(inArray(usersTable.chatId, failedUserIds));
   }
 
   endTime = new Date();
