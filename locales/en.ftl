@@ -43,7 +43,6 @@ broadcasting_progress=
   Total Users: <code>{ $length }</code>
   Success: <code>{ $successCount }</code>
   Blocked: <code>{ $blockedCount }</code>
-  Deleted: <code>{ $unknownErrorCount }</code>
 
 broadcast_complete=
   <blockquote>Broadcast completed!</blockquote>
@@ -52,7 +51,7 @@ broadcast_complete=
   Total Users: <code>{ $length }</code>
   Success: <code>{ $successCount }</code>
   Blocked: <code>{ $blockedCount }</code>
-  Deleted: <code>{ $unknownErrorCount }</code>
+  Deleted: <code>{ $deletedCount }</code>
 
 welcome_message_channels_given=
   Don't forget to join channels given below and get what you dream in your life. ✌🏻
