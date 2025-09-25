@@ -1,6 +1,6 @@
 import { Composer } from "grammy";
 
-import { eq } from "drizzle-orm";
+import { eq, inArray } from "drizzle-orm";
 
 import { db } from "#/drizzle/db";
 import { usersTable } from "#/drizzle/schema";
