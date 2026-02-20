@@ -4,6 +4,7 @@ import type { Message } from "grammy/types";
 import type { MessageXFragment } from "@grammyjs/hydrate/out/data/message";
 
 import { eq } from "drizzle-orm";
+import { Api } from "telegram";
 
 import { client } from "#/config/telegram-user-client";
 import { db } from "#/drizzle/db";
@@ -77,7 +78,13 @@ export async function addFiles(
 ) {
   await client.connect();
 
-  const files = [];
+  const files: {
+    messageId: number;
+    caption: string;
+    channelId: string;
+    fileSize: number;
+    type: "video" | "image";
+  }[] = [];
 
   const findingFilesText =
     prefix +
@@ -85,13 +92,20 @@ export async function addFiles(
     i18n.t("en", "finding_files_in_channel", {
       channelId,
     });
-  addingMessage.editText(findingFilesText);
+
+  await addingMessage.editText(findingFilesText);
   Logger.send(findingFilesText);
 
   for await (const message of client.iterMessages(parseInt(channelId.trim()), {
     limit: 10000000,
   })) {
-    if (!message.file?.mimeType?.startsWith("video")) continue;
+    if (!message) continue;
+
+    const isVideo = message.file?.mimeType?.startsWith("video");
+    const isImageMime = message.file?.mimeType?.startsWith("image");
+    const isTelegramPhoto = !!message.photo;
+
+    if (!isVideo && !isImageMime && !isTelegramPhoto) continue;
 
     if (message.restrictionReason) {
       Logger.send(
@@ -104,6 +118,7 @@ export async function addFiles(
       continue;
     }
 
+    // Progress update every 500 files
     if (files.length !== 0 && files.length % 500 === 0) {
       const foundFilesText =
         prefix +
@@ -112,24 +127,49 @@ export async function addFiles(
           filesCount: files.length,
           channelId,
         });
-      addingMessage.editText(foundFilesText);
+
+      await addingMessage.editText(foundFilesText);
       Logger.send(foundFilesText);
+    }
+
+    let fileSize = 0;
+    let type: "video" | "image" = "image";
+
+    if (message.file?.size) {
+      fileSize = Math.trunc(Number(message.file.size) / 1024 / 1024);
+    }
+
+    if (isVideo) {
+      type = "video";
+    }
+
+    if (message.photo && message.photo instanceof Api.Photo) {
+      const sizes = message.photo.sizes;
+
+      if (sizes && sizes.length > 0) {
+        const largest = sizes[sizes.length - 1];
+
+        if ("size" in largest && largest.size) {
+          fileSize = Math.trunc(Number(largest.size) / 1024 / 1024);
+        }
+      }
+
+      type = "image";
     }
 
     files.push({
       messageId: message.id,
-      caption: message.message || (message.file.name as string),
+      caption: message.message || message.file?.name || "No caption",
       channelId,
-      fileSize: Math.trunc(
-        parseInt(message.file.size?.toString() || "") / 1024 / 1024,
-      ),
+      fileSize,
+      type,
     });
   }
 
-  if (files.length === 0)
-    throw new Error("No files found in the given channel!");
+  if (files.length === 0) {
+    throw new Error("No media files found in the given channel!");
+  }
 
-  // await client.disconnect();
   await insertFilesInChunks(files);
 
   return files;
